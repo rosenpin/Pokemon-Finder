@@ -21,22 +21,23 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-
 public class JSONParser {
     static InputStream is = null;
     static JSONObject jObj = null;
     static JSONArray jAry = null;
     static String json = "";
+
     // constructor
     public JSONParser() {
     }
-    public JSONObject getJSONFromUrl(String url,List<NameValuePair> params) {
+
+    public JSONObject getJSONFromUrl(String url, List<NameValuePair> params) {
         // Making HTTP request
         try {
             // defaultHttpClient
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(url);
-            if(params != null){
+            if (params != null) {
                 httpPost.setEntity(new UrlEncodedFormEntity(params));
             }
             HttpResponse httpResponse = httpClient.execute(httpPost);
@@ -72,13 +73,13 @@ public class JSONParser {
         return jObj;
     }
 
-    public JSONObject getJSONFromUrls(String url,List<NameValuePair> params) {
+    public JSONObject getJSONFromUrls(String url, List<NameValuePair> params) {
         // Making HTTP request
         try {
             // defaultHttpClient
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpGet httpPost = new HttpGet(url);
-            if(params != null){
+            if (params != null) {
                 //httpPost.setEntity(new UrlEncodedFormEntity(params));
             }
             HttpResponse httpResponse = httpClient.execute(httpPost);
@@ -114,7 +115,7 @@ public class JSONParser {
         return jObj;
     }
 
-    public JSONArray getJSONArray(String url,List<NameValuePair> params) {
+    public JSONArray getJSONArray(String url, List<NameValuePair> params) {
         // Making HTTP request
         try {
             // defaultHttpClient
