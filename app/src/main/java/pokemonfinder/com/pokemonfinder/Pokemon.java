@@ -1,5 +1,10 @@
 package pokemonfinder.com.pokemonfinder;
 
+import android.content.Context;
+import android.location.Location;
+
+import pokemonfinder.com.pokemonfinder.Server.GPSTracker;
+
 public class Pokemon {
 
     private String name;
@@ -12,10 +17,6 @@ public class Pokemon {
         this.lat = lat;
         this.lon = lon;
         this.resourceID = respurceId;
-    }
-
-    public String getLat() {
-        return lat;
     }
 
     public void setLat(String lat) {
@@ -34,6 +35,10 @@ public class Pokemon {
         return lon;
     }
 
+    public String getLat() {
+        return lat;
+    }
+
     public void setLon(String lon) {
         this.lon = lon;
     }
@@ -46,4 +51,11 @@ public class Pokemon {
         this.resourceID = resourceID;
     }
 
+    public int getDistance(Context context) {
+        GPSTracker gpsTracker = new GPSTracker(context);
+        Location pokemonLocation = new Location("");
+        pokemonLocation.setLatitude(Double.parseDouble(lat));
+        pokemonLocation.setLongitude(Double.parseDouble(lon));
+        return (int) gpsTracker.getLocation().distanceTo(pokemonLocation);
+    }
 }

@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -18,23 +20,31 @@ import java.util.ArrayList;
 import pokemonfinder.com.pokemonfinder.Server.GPSTracker;
 import pokemonfinder.com.pokemonfinder.Server.PokeJsonAPI;
 import pokemonfinder.com.pokemonfinder.Server.PokemonServer;
+import pokemonfinder.com.pokemonfinder.Views.PokemonAdapter;
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String[] INITIAL_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
     private static final int INITIAL_REQUEST = 1337;
-
+    private SwipeRefreshLayout refreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
         if (!canAccessLocation()) {
             ActivityCompat.requestPermissions(this, INITIAL_PERMS, INITIAL_REQUEST);
         } else {
             refresh();
         }
+
     }
 
     public void refresh() {
@@ -45,24 +55,17 @@ public class MainActivity extends AppCompatActivity {
             if (loc != null) {
                 double longitude = loc.getLongitude();
                 double latitude = loc.getLatitude();
-                Toast.makeText(getApplicationContext(), "Got Location: " + longitude + " " + latitude,
-                        Toast.LENGTH_LONG).show();
-
                 JSONObject responseJson = PokemonServer.getNearPokemonsByCordinates(latitude + "", longitude + "");
                 if (responseJson != null) {
-                    ArrayList<Pokemon> pokemons = PokeJsonAPI.getPokemonListByJsonObj(responseJson);
+                    ArrayList<Pokemon> pokemons = PokeJsonAPI.getPokemonListByJsonObj(this,responseJson);
                     if (pokemons == null)
-                        Log.d(Constants.TAG, "Errofrr in server resopnse");
+                        Log.d(Constants.TAG, "Error in server resopnse");
 
-                    else if (pokemons.size() == 0)
+                    else if (pokemons.size() == 0) {
                         Log.d(Constants.TAG, "There's no pokemons around you :(");
-                    else {
-                        for (int i = 0; i < pokemons.size(); i++) {
-                            Pokemon poke = pokemons.get(i);
-                            Toast.makeText(MainActivity.this, "Pokemon #" + i + "\n" +
-                                    "Name: " + poke.getName() + "Latitude: " + poke.getLat() + "Langtiude: " +
-                                    poke.getLng(), Toast.LENGTH_SHORT).show();
-                        }
+
+                    } else {
+                        ((ListView) findViewById(R.id.poke_list)).setAdapter(new PokemonAdapter(this, pokemons));
                     }
                 }
             } else {
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.d(Constants.TAG, "GPS is not active!");
         }
+        refreshLayout.setRefreshing(false);
     }
 
     @Override

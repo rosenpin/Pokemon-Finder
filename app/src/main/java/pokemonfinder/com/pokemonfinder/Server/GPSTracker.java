@@ -22,15 +22,7 @@ public class GPSTracker {
     LocationListener locationListenerNetwork = new LocationListener() {
         public void onLocationChanged(Location location) {
             timer1.cancel();
-            //locationResult.gotLocation(location);
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             lm.removeUpdates(this);
@@ -75,7 +67,6 @@ public class GPSTracker {
 
     public Location getLocation(Context context, LocationResult result) {
         //I use LocationResult callback class to pass location value from GPSTracker to user code.
-        locationResult = result;
         if (lm == null)
             lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
@@ -108,27 +99,30 @@ public class GPSTracker {
     }
 
     public Location getLocation() {
-        Location net_loc = null, gps_loc = null;
+        if (lm == null)
+            lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        Location gpsLocation = null;
+        Location netWorkLocation = null;
+        Location passiveLocation = null;
 
-        if (gps_enabled)
-            gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (network_enabled)
-            net_loc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            gpsLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        //if there are both values use the latest one
-        if (gps_loc != null && net_loc != null) {
-            if (gps_loc.getTime() > net_loc.getTime())
-                return gps_loc;
-            else
-                return net_loc;
-        }
+        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+            netWorkLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-        if (gps_loc != null) {
-            return gps_loc;
-        }
-        if (net_loc != null) {
-            return net_loc;
-        }
+        if (lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER))
+            passiveLocation = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+        if (gpsLocation != null)
+            return gpsLocation;
+
+        if (netWorkLocation != null)
+            return netWorkLocation;
+
+        if (passiveLocation != null)
+            return passiveLocation;
+
         return null;
     }
 

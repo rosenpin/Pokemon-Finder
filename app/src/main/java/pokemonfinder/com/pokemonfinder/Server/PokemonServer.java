@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -41,7 +40,6 @@ public class PokemonServer {
 
         @Override
         protected JSONObject doInBackground(String... args) {
-            JSONParser json = new JSONParser();
             String myUrl = Constants.REQUEST_PREFIX + "" + request + "/" + lat + "/" + lng;
             try {
                 URL url = new URL(myUrl);
@@ -55,10 +53,8 @@ public class PokemonServer {
                     Log.d(Constants.TAG, obj.toString());
                     return obj;
                 } catch (Throwable t) {
-                    Log.e(Constants.TAG, "Could not parse malformed JSON: \"" + json + "\"");
+                    Log.e(Constants.TAG, "Could not parse malformed JSON: \"" + "\"");
                 }
-            } catch (ClientProtocolException e) {
-                Log.d(Constants.TAG, e.toString() + myUrl);
             } catch (IOException e) {
                 Log.d(Constants.TAG, e.toString() + myUrl);
             }
