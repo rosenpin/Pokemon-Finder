@@ -18,9 +18,7 @@ import pokemonfinder.com.pokemonfinder.Constants;
 public class PokemonServer {
 
     public static JSONObject getNearPokemonsByCordinates(String lat, String lng) {
-
-        JSONObject jsonObject = null;
-
+        JSONObject jsonObject;
         try {
             jsonObject = new Request("/map/data", lat, lng).execute().get();
             return jsonObject;
@@ -64,16 +62,11 @@ public class PokemonServer {
             } catch (IOException e) {
                 Log.d(Constants.TAG, e.toString() + myUrl);
             }
-
             return null;
-
         }
-
 
         @Override
         protected void onPostExecute(JSONObject json) {
-
-
         }
     }
 }

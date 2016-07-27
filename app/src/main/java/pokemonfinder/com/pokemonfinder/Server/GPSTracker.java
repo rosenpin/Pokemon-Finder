@@ -50,15 +50,7 @@ public class GPSTracker {
         @Override
         public void onLocationChanged(Location location) {
             timer1.cancel();
-            //  locationResult.gotLocation(location);
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             lm.removeUpdates(this);
@@ -90,11 +82,11 @@ public class GPSTracker {
         //exceptions will be thrown if provider is not permitted.
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         try {
             network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         //Toast.makeText(context, gps_enabled+" "+network_enabled,     Toast.LENGTH_LONG).show();
@@ -105,13 +97,6 @@ public class GPSTracker {
 
         if (gps_enabled)
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return null;
             }
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListenerGps);
@@ -120,58 +105,10 @@ public class GPSTracker {
         timer1 = new Timer();
 
         return null;
-        // timer1.schedule(new GetLastLocation(), 10000);
-        //    Toast.makeText(context, " Yaha Tak AAya", Toast.LENGTH_LONG).show();
-        // return true;
     }
 
-   /* class GetLastLocation extends TimerTask {
-        @Override
-
-        public void run() {
-
-            //Context context = getClass().getgetApplicationContext();
-            Location net_loc = null, gps_loc = null;
-            if (gps_enabled)
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(network_enabled)
-                net_loc=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-            //if there are both values use the latest one
-            if(gps_loc!=null && net_loc!=null){
-                if(gps_loc.getTime()>net_loc.getTime())
-                    locationResult.gotLocation(gps_loc);
-                else
-                    locationResult.gotLocation(net_loc);
-                return;
-            }
-
-            if(gps_loc!=null){
-                locationResult.gotLocation(gps_loc);
-                return;
-            }
-            if(net_loc!=null){
-                locationResult.gotLocation(net_loc);
-                return;
-            }
-            locationResult.gotLocation(null);
-        }
-    } */
-
     public Location getLocation() {
-
-        //Context context = getClass().getgetApplicationContext();
         Location net_loc = null, gps_loc = null;
-
 
         if (gps_enabled)
             gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -197,9 +134,7 @@ public class GPSTracker {
 
     public boolean isGPSActive() {
         final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            return false;
-        return true;
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
 

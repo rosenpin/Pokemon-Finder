@@ -38,7 +38,6 @@ public class Pokemon {
         this.lon = lon;
     }
 
-
     public int getResourceID() {
         return resourceID;
     }

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,21 +21,15 @@ import pokemonfinder.com.pokemonfinder.Server.PokemonServer;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private static final String[] INITIAL_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
     private static final int INITIAL_REQUEST = 1337;
-    private static final int LOCATION_REQUEST = INITIAL_REQUEST + 1;
-    private static final String[] LOCATION_PERMS = {
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         if (!canAccessLocation()) {
             ActivityCompat.requestPermissions(this, INITIAL_PERMS, INITIAL_REQUEST);
         } else {
@@ -44,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void refresh() {
         GPSTracker gpsTracker = new GPSTracker(MainActivity.this);
-
         if (gpsTracker.isGPSActive()) {
             gpsTracker.getLocation(getApplicationContext(), null);
             Location loc = gpsTracker.getLocation();
@@ -68,11 +62,8 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Pokemon #" + i + "\n" +
                                     "Name: " + poke.getName() + "Latitude: " + poke.getLat() + "Langtiude: " +
                                     poke.getLng(), Toast.LENGTH_SHORT).show();
-
-
                         }
                     }
-
                 }
             } else {
                 Log.d(Constants.TAG, "Can't get location for unknown reason");
@@ -82,15 +73,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1337:
                 if (canAccessLocation()) {
                     refresh();
-                } else {
-                    // user denied the request TO GET LOCATION.
                 }
                 break;
         }
@@ -103,6 +91,4 @@ public class MainActivity extends AppCompatActivity {
     private boolean hasPermission(String perm) {
         return (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(this, perm));
     }
-
-
 }
